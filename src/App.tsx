@@ -1,111 +1,26 @@
-import { useState, useEffect, FormEvent } from 'react';
+import {  FormEvent } from 'react';
 
 import './App.css'
 import Form from './components/form';
 
-type ConnectionSpec = {
-  documentation_url: string;
-  connection_specification: {
-    $schema: string;
-    title: string;
-    type: string;
-    required: string[];
-    properties: {
-      credentials: {
-        title: string;
-        type: string;
-        oneOf: Array<{
-          title: string;
-          type: string;
-          required: string[];
-          order: number;
-          properties: {
-            auth_type: {
-              type: string;
-              const: string;
-              order: number;
-            };
-            username: {
-              description: string;
-              examples: string[];
-              type: string;
-              title: string;
-              order: number;
-            };
-            password: {
-              description: string;
-              type: string;
-              multiwoven_secret: boolean;
-              title: string;
-              order: number;
-            };
-          };
-        }>;
-        order: number;
-      };
-      host: {
-        description: string;
-        examples: string[];
-        type: string;
-        title: string;
-        order: number;
-      };
-      role: {
-        description: string;
-        examples: string[];
-        type: string;
-        title: string;
-        order: number;
-      };
-      warehouse: {
-        description: string;
-        examples: string[];
-        type: string;
-        title: string;
-        order: number;
-      };
-      database: {
-        description: string;
-        examples: string[];
-        type: string;
-        title: string;
-        order: number;
-      };
-      schema?: {
-        description: string;
-        examples: string[];
-        type: string;
-        title: string;
-        order: number;
-      };
-      jdbc_url_params?: {
-        description: string;
-        title: string;
-        type: string;
-        order: number;
-      };
-    };
-  };
-};
-
-
 function App() {
-  const [jsonInput, setJsonInput] = useState<ConnectionSpec | null>(null);
 
-  const handleSubmit = (event:FormEvent) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();    
-    const formData = event.target[0].value;
-    const json = formData as string;
-
+    
+    const formData = new FormData(event.currentTarget); // Use FormData to access form elements
+    const json = formData.get('json') as string; // 'json' is the name attribute of your textarea
+  
     try {
       const parsedJson = JSON.parse(json);
       console.log(parsedJson);
-      sessionStorage.setItem("JSON",json);
-      window.location.reload()
+      sessionStorage.setItem("JSON", json);
+      window.location.reload(); // Reloading the page might not be the best way to update the component
     } catch (error) {
       console.error('Error parsing JSON:', error);
     }
   };
+  
 
   return (
     <>

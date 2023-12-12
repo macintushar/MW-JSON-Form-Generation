@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 type ConnectionSpec = {
   documentation_url: string;
   connection_specification: {
@@ -85,10 +83,36 @@ type ConnectionSpec = {
   };
 };
 
-
+type Credentials = {
+          title: string;
+          type: string;
+          required: string[];
+          order: number;
+          properties: {
+            auth_type: {
+              type: string;
+              const: string;
+              order: number;
+            };
+            username: {
+              description: string;
+              examples: string[];
+              type: string;
+              title: string;
+              order: number;
+            };
+            password: {
+              description: string;
+              type: string;
+              multiwoven_secret: boolean;
+              title: string;
+              order: number;
+            };
+          };
+    }
 function Form() {
     try{
-    const data:ConnectionSpec = JSON.parse(sessionStorage.getItem("JSON"));
+    const data:ConnectionSpec = JSON.parse(sessionStorage.getItem("JSON") || "");
 
     const renderInputField = (property, key) => {
     const inputType = property.multiwoven_secret ? 'password' : 'text'; // Determine input type
@@ -114,7 +138,7 @@ function Form() {
 
 
     if (property.type === "object" && property.oneOf) {
-      const selectedCredentialType = property.oneOf[0];
+      const selectedCredentialType:Credentials = property.oneOf[0];
 
       const sortedProperties = Object.entries(selectedCredentialType.properties).sort((a, b) => {
         return a[1].order - b[1].order;
